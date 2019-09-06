@@ -17,39 +17,43 @@ int N;
 bool sizeWorks(int len){
 	int i,mindex=0;
 	vector<stack<int>> plateStacks;
-	priority_queue<int> queue;
+	priority_queue<int,vector<int>,greater<int>> queue;
 	for(i=0;i<len;i++)
 		queue.push(plateOrder[i]);
 
-	cout<<"Len "<<len<<endl;
+//	cout<<"Len "<<len<<endl;
 	for(i=0;i<len;i++){
-		cout<<mindex<<" "<<plateStacks.size()<<endl;
-		cout<<"Num: "<<plateOrder[i]<<endl;
 		int lo = mindex;
-		int hi = plateStacks.size();
-		while(lo+1<hi){
+		int hi = plateStacks.size()-1;
+		//Right here we are looking for an lower_bound.
+		//We need to find the closest index that
+		//can hold our value.
+		while(lo<hi){
 			int mid = (lo+hi)/2;
-			if(plateStacks[mid].top()>plateOrder[i])
-				lo = mid;
-			else
+			if(plateStacks[mid].top()<plateOrder[i]){
+				lo = mid+1;
+//				cout<<i<<": Too small"<<endl;
+			}else{
 				hi = mid;
+//				cout<<i<<": Possible"<<endl;
+			}
 		}
-		if(plateStacks[lo].top()<plateOrder[i])
+		if(mindex<plateStacks.size()&&plateStacks[lo].top()<plateOrder[i])
 			lo++;
-		cout<<" lo: "<<lo<<endl;
 		if(lo==plateStacks.size())
 			plateStacks.push_back(stack<int>());
 		plateStacks[lo].push(plateOrder[i]);
+//		cout<<plateStacks[mindex].top()<<"<- Min ->"<<queue.top()<<endl;
                 while(mindex<plateStacks.size()&&plateStacks[mindex].top()==queue.top()){
-			cout<<"Popping"<<endl;
+//			cout<<"Popping"<<endl;
 			plateStacks[mindex].pop();
 			queue.pop();
 			if(plateStacks[mindex].empty())
 				mindex++;
 		}
-		cout<<"Cool"<<endl;
 
 	}
+//	cout<<"Works: "<<queue.empty()<<endl;
 	return queue.empty();
 }
 
@@ -69,6 +73,8 @@ int main(){
 
 	int lo = 0;
 	int hi = N+1;
+	//This is an upper_bound binary search
+	//We want the longest working length possible.
 	while(lo+1<hi){
 		int mid = (lo+hi)/2;
 		if(sizeWorks(mid))
