@@ -21,37 +21,36 @@ bool sizeWorks(int len){
 	for(i=0;i<len;i++)
 		queue.push(plateOrder[i]);
 
-	cout<<len<<endl;
+	cout<<"Len "<<len<<endl;
 	for(i=0;i<len;i++){
-		int lo = mindex-1;
-		int hi = plateStacks.size()+1;
-		if(mindex<plateStacks.size())
-			while(lo+1<hi){
-				int mid = (lo+hi)/2;
-				cout<<"trying"<<endl;
-				if(plateStacks[mid].top()>plateOrder[i])
-					lo = mid;
-				else
-					hi = mid;
-				cout<<"did"<<endl;
-			}
-		else
-			lo = mindex;
-		cout<<"Check"<<endl;
-		if(lo<mindex)
-			return false;
+		cout<<mindex<<" "<<plateStacks.size()<<endl;
+		cout<<"Num: "<<plateOrder[i]<<endl;
+		int lo = mindex;
+		int hi = plateStacks.size();
+		while(lo+1<hi){
+			int mid = (lo+hi)/2;
+			if(plateStacks[mid].top()>plateOrder[i])
+				lo = mid;
+			else
+				hi = mid;
+		}
+		if(plateStacks[lo].top()<plateOrder[i])
+			lo++;
+		cout<<" lo: "<<lo<<endl;
 		if(lo==plateStacks.size())
 			plateStacks.push_back(stack<int>());
 		plateStacks[lo].push(plateOrder[i]);
                 while(mindex<plateStacks.size()&&plateStacks[mindex].top()==queue.top()){
+			cout<<"Popping"<<endl;
 			plateStacks[mindex].pop();
-			if(plateStacks[mindex].size()<1)
+			queue.pop();
+			if(plateStacks[mindex].empty())
 				mindex++;
 		}
 		cout<<"Cool"<<endl;
 
 	}
-	return true;
+	return queue.empty();
 }
 
 int main(){
