@@ -43,7 +43,7 @@ bool sizeWorks(int len){
 		if(lo==plateStacks.size())
 			plateStacks.push_back(stack<int>());
 		plateStacks[lo].push(plateOrder[i]);
-                while(plateStacks[mindex].top()==queue.top()){
+                while(mindex<plateStacks.size()&&plateStacks[mindex].top()==queue.top()){
 			plateStacks[mindex].pop();
 			if(plateStacks[mindex].size()<1)
 				mindex++;
