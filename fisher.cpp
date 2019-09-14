@@ -12,8 +12,12 @@ int toll[MAXN][MAXN];
 
 int N,T;
 
-pair<int,int> minCost(int node,int time_left){
-
+int minCost(int node,int time_left){
+	if(time_left<0)
+		return -1;
+	if(node>=N-1)
+		return 0;
+	
 }
 
 int main(){
