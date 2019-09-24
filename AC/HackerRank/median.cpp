@@ -1,5 +1,6 @@
 #include <iostream>
 #include <map>
+#include <iomanip>
 
 using namespace std;
 
@@ -30,7 +31,7 @@ void dec(){//Decrement the Median Position
     }
 }
 
-int nextUp(){//Return next biggest number
+long long nextUp(){//Return next biggest number
     map<int,int>::iterator itr = tree.find(mid);
     if(mp==(*itr).second){
         itr++;
@@ -42,6 +43,8 @@ int nextUp(){//Return next biggest number
 int main(){
     int N;
     cin>>N;
+    cout<<fixed;
+    cout<<setprecision(1);
     mid = 0;
     mp = 0;
     size = 0;
@@ -92,13 +95,11 @@ int main(){
                 mp = 1;
                 mid = (*it).first;
             }
-            //printf("Num: %d Freq:%d\n Mid: %d\n Mp: %d\n Size: %d\n",num,freq,mid,mp,size);
         }else{
             if(it==tree.end()){
                 it = tree.insert(make_pair(num,0)).first;
             }
             (*it).second++;
-            int freq = (*it).second;
             size++;
             if(size==1){
                 mid = num;
@@ -111,21 +112,17 @@ int main(){
             else if((num>=mid)&&!odd){
                 inc();
             }
-            //printf("Num: %d Freq:%d\n Mid: %d\n Mp: %d\n Size: %d\n",num,freq,mid,mp,size);
         }
         print:
         if(!odd)
             cout<<mid<<endl;
         else{
-            cout<<(mid+nextUp())/2.0<<endl;
+            double output = (long(mid) + nextUp())/2.0;
+            if(int(output)==output)
+                cout<<int(output)<<endl;
+            else
+                cout<<output<<endl;
         }
-        printf("Mid %d\nMp: %d\n",mid,mp);
-        for(auto lol : tree){
-            for(int i=0;i<lol.second;i++){
-                printf("%d ",lol.first);
-            }
-        }
-        printf("\n");
     }
 
 
