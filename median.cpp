@@ -119,13 +119,13 @@ int main(){
         else{
             cout<<(mid+nextUp())/2.0<<endl;
         }
-        /*printf("Mid %d\nMp: %d\n",mid,mp);
+        printf("Mid %d\nMp: %d\n",mid,mp);
         for(auto lol : tree){
             for(int i=0;i<lol.second;i++){
                 printf("%d ",lol.first);
             }
-            printf("\n");
-        }*/
+        }
+        printf("\n");
     }
 
 
