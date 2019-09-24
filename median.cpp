@@ -87,6 +87,11 @@ int main(){
             else if((num>=mid)&&odd){
                 dec();
             }
+            else if(num==mid&&mp>(*it).second){//Special case
+                it++;
+                mp = 1;
+                mid = (*it).first;
+            }
             //printf("Num: %d Freq:%d\n Mid: %d\n Mp: %d\n Size: %d\n",num,freq,mid,mp,size);
         }else{
             if(it==tree.end()){
