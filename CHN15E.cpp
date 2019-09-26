@@ -1,23 +1,22 @@
 #include <iostream>
 #include <queue>
-#include <algorithm>
+#include <unordered_set>
 
 using namespace std;
 
 const int MAXN = 10005;
+unordered_set<int> adj[MAXN],res[MAXN];
 
-vector<int> adj[MAXN],res[MAXN],rev[MAXN];
-
-int indeg1[MAXN],//Inedges
-indeg2[MAXN],
-pointers[MAXN],
-topsort[MAXN],
-pathcount[MAXN];
+int outedges[MAXN],//Outedges
+val[MAXN],
+topsort[MAXN];
 int N,M,topSize;
 
-
-bool pthcmp(int a,int b){
-    return pathcount[a]>pathcount[b];
+void DFS(int node){
+    for(auto child:res[node]){
+        printf("%d %d\n",node+1,child+1);
+        DFS(child);
+    }
 }
 
 int main(){
@@ -31,68 +30,82 @@ int main(){
         for(i=0;i<N;i++){
             adj[i].clear();
             res[i].clear();
-            rev[i].clear();
-            indeg1[i] = 0;
-            indeg2[i] = 0;
-            pointers[i] = i;
-            pathcount[i] = 0;
+            outedges[i] = 0;
         }
 
-        for(i=0;i<N;i++){
+        for(i=0;i<M;i++){
             cin>>j>>k;
             j--;
             k--;
-            adj[j].push_back(k);
-            adj[k].push_back(j);
-            indeg1[k]++;
-            indeg2[k]++;
+            adj[k].insert(j);//Reversed
+            outedges[j]++;
         }
-    }
-    //Topsort setup
-    for(i=0;i<N;i++){
-        if(!indeg1[i])
-            topsort[topSize++]=i;
-    }
 
-    //Topsorting
-    for(i=0;i<topSize;i++){
-            for(auto dest : adj[topsort[i]]){
-                    indeg2[dest]--;
-                    if(!indeg2[dest])
-                        topsort[topSize++] = dest;
+        int root;
+        //Topsort setup
+        for(i=0;i<N;i++){
+            if(!outedges[i]){
+                val[i] = topSize;
+                topsort[topSize++]=i;
             }
-    }
-
-    pathcount[0]=1;
-    for(i=0;i<N;i++){
-        for(auto a:adj[topsort[i]]){
-            pathcount[a]+=pathcount[topsort[i]];
+            if(adj[i].size()==0)
+                root = i;
         }
-    }
-    sort(pointers,pointers+N,pthcmp);
 
-    //okay, now the topsort array is gonna become an inverted pointer array
-
-    for(i=0;i<N;i++){
-        topsort[pointers[i]] = i;
-        if(!indeg1[pointers[i]])
-            continue;
-        int earliest = rev[pointers[i]][0];
-        for(auto parent:rev[pointers[i]]){
-                if(topsort[parent]<topsort[pointers[i]])
-                    earliest = parent;
-        }
-        for(auto dest:adj[earliest]){
-            for(auto d2:adj[dest]){
-                if(d2==pointers[i]){
-                    res[dest].push_back(d2);
-                    indeg1[d2] = 0;
-                    goto walktwo;
+        //Topsorting
+        for(i=0;i<topSize;i++){
+                //printf("Topsort: %d\n",topsort[i]);
+                for(auto dest : adj[topsort[i]]){
+                        outedges[dest]--;
+                        if(!outedges[dest]){
+                            val[dest] = topSize;
+                            topsort[topSize++] = dest;
+                        }
                 }
-            }
         }
-        walktwo:
-            continue;
+
+        int cur;
+        for(i=0;i<N;i++){
+            cur = topsort[i];
+            //printf("%d inedges: %d\n",cur+1,adj[cur].size());
+            if(adj[cur].empty())
+                continue;
+            int earliest = *adj[cur].begin();
+            if(adj[cur].size()==1){
+                res[earliest].insert(cur);
+            }
+            else{
+                for(auto parent:adj[cur])
+                        if(val[parent]>val[earliest])
+                            earliest = parent;
+                if(outedges[cur]){
+                    int parent = outedges[cur]-1;
+                    for(auto babushka:adj[parent]){
+                        if(babushka==earliest){
+                            res[babushka].insert(parent);
+                            res[parent].insert(cur);
+                            outedges[parent] = babushka+1;
+                            goto end_loop;
+                        }
+                    }
+                }
+                else
+                    for(auto parent:adj[cur]){
+                        for(auto babushka:adj[parent]){
+                            if(babushka==earliest){
+                                //printf("%d %d %d\n",babushka+1,parent+1,cur+1);
+                                res[babushka].insert(parent);
+                                res[parent].insert(cur);
+                                outedges[parent] = babushka+1;
+                                goto end_loop;
+                            }
+                        }
+                    }
+            }
+            end_loop:
+                continue;
+        }
+        DFS(root);
     }
     return 0;
 }
