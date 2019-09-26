@@ -1,23 +1,18 @@
 #include <iostream>
 #include <queue>
 #include <unordered_set>
+#include <bitset>
 
 using namespace std;
 
 const int MAXN = 10005;
 unordered_set<int> adj[MAXN],res[MAXN];
+bitset<MAXN> visited;
 
 int outedges[MAXN],//Outedges
 val[MAXN],
 topsort[MAXN];
 int N,M,topSize;
-
-void DFS(int node){
-    for(auto child:res[node]){
-        printf("%d %d\n",node+1,child+1);
-        DFS(child);
-    }
-}
 
 int main(){
 
@@ -30,6 +25,7 @@ int main(){
         for(i=0;i<N;i++){
             adj[i].clear();
             res[i].clear();
+            visited.reset(i);
             outedges[i] = 0;
         }
 
@@ -75,37 +71,36 @@ int main(){
                 res[earliest].insert(cur);
             }
             else{
-                for(auto parent:adj[cur])
+                for(auto parent:adj[cur]){
+                        if(!outedges[cur])//If a Forced edge does not exist, add all
+                            res[parent].insert(cur);
                         if(val[parent]>val[earliest])
                             earliest = parent;
-                if(outedges[cur]){
-                    int parent = outedges[cur]-1;
+                }
+
+                for(auto parent:adj[cur]){
                     for(auto babushka:adj[parent]){
                         if(babushka==earliest){
+                            //printf("%d %d %d\n",babushka+1,parent+1,cur+1);
+                            outedges[parent] = 1;//Forcing this edge
                             res[babushka].insert(parent);
-                            res[parent].insert(cur);
-                            outedges[parent] = babushka+1;
-                            goto end_loop;
                         }
                     }
                 }
-                else
-                    for(auto parent:adj[cur]){
-                        for(auto babushka:adj[parent]){
-                            if(babushka==earliest){
-                                //printf("%d %d %d\n",babushka+1,parent+1,cur+1);
-                                res[babushka].insert(parent);
-                                res[parent].insert(cur);
-                                outedges[parent] = babushka+1;
-                                goto end_loop;
-                            }
-                        }
-                    }
             }
-            end_loop:
-                continue;
         }
-        DFS(root);
+        queue<int> q;
+        q.push(root);
+        while(!q.empty()){
+                for(auto child: res[q.front()]){
+                    if(!visited[child]){
+                        printf("%d %d\n",q.front()+1,child+1);
+                        visited.set(child);
+                        q.push(child);
+                    }
+                }
+                q.pop();
+        }
     }
     return 0;
 }
