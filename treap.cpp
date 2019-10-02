@@ -7,29 +7,62 @@ class treap{
 	struct node{
 		K key;
 		int priority;
+		node* parent;
 		node* left;
 		node* right;
-		node(K data):key(data),priority(rand()%100){}
+		node(K data):key(data),priority(rand()%2){}
 	};
+	private:
+		void rotR(node* parent){
+			node* child = parent->left;
+			node* babushka = parent->parent;
+			parent->left = child->right;
+			child->right = parent;
+			child -> parent = babushka;
+			if(babushka)
+			{
+				if(babushka->left==parent)
+					babushka->left = child;
+				else
+					babushka->right = child;
+			}
+		}
+		void rotL(node* parent){
+			node* child = parent->right;
+			node* babushka = parent->parent;
+			parent->right = child->left;
+			child->left = parent;
+			child -> parent = babushka;
+			if(babushka)
+			{
+				if(babushka->left==parent)
+					babushka->left = child;
+				else
+					babushka->right = child;
+			}
+		}
 	public:
-		node* root;
+		node* root=NULL;
 		void insert(K data){
 			node* n = new node(data);
+			node* parent = NULL;
 			node** x = &root;
 			while((*x)){
-				if((*x)->priority<=n->priority)
-					break;
+				parent = *x;
 				if((*x)->key<data)
 					x = &((*x)->right);
 				else
 					x = &((*x)->left);
 			}
-			if((*x)->key>data)
-				n->right = *x;
-			else
-				n->left = *x;
 			*x = n;
-			printf("root %d\n",root->key);
+			n->parent = parent;
+			while(parent && (parent->priority) < (n->priority)){
+				if(parent->left==n)
+					rotR(parent);
+				else
+					rotL(parent);
+				parent = n->parent;
+			}
 		}
 		void inorder(node* x){
 			if(x->left)
