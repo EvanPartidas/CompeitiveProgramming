@@ -9,8 +9,11 @@ char STR[MAXN];
 
 void countsort(int k,int size){
     int i;
-    memset(C,0,size);
+    for(i=0;i<size;i++)
+		C[i]=0;
+		
     for(i=0;i<N;i++){
+		printf("%d \n",SA[i]+k<N?RA[SA[i]+k]:0);
         cout<<C[SA[i]+k<N?RA[SA[i]+k]:0]++<<endl;
 	}
     
@@ -30,15 +33,14 @@ void print(){
 }
 
 void initSA(){
-    int i,j,k,r;
+    int i,k,r;
     for(i=0;i<N;i++)
         RA[i]=STR[i],SA[i]=i;
     print();
     for(k=1;k<N;k<<=1){
-            countsort(0,300);//Stabilizes the array (and is also necessary)
-			print();
-			puts("Sorting again");
             countsort(k,300);//Reverses the array stably
+			print();
+            countsort(0,300);//Stabilizes the array (and is also necessary)
 			print();
             TRA[SA[0]]=r=0;
             for(i=1;i<N;i++){
