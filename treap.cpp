@@ -7,12 +7,20 @@ class treap{
 	struct node{
 		K key;
 		int priority;
+		int count;
 		node* parent;
 		node* left;
 		node* right;
-		node(K data):key(data),priority(rand()%100),parent(NULL),left(NULL),right(NULL){}
+		node(K data):key(data),priority(rand()%100),parent(NULL),left(NULL),right(NULL),count(1){}
 	};
 	private:
+		void update_count(node* node){
+			node->count = 1;
+			if(node->right)
+				node->count+=node->right->count;
+			if(node->left)
+				node->count+=node->left->count;
+		}
 		void rotR(node* parent){
 			node* child = parent->left;
 			node* babushka = parent->parent;
@@ -78,16 +86,26 @@ class treap{
 					rotR(parent);
 				else
 					rotL(parent);
+				update_count(parent);
 				parent = n->parent;
+			}
+			update_count(n);
+			while(parent){
+				update_count(parent);
+				parent=parent->parent;
 			}
 		}
 		void inorder(node* x){
 			if(x->left){
+//				printf("<L%d>\n",x->key);
 				inorder(x->left);
+//				printf("</L%d>\n",x->key);
 			}
-			cout<<(x->key)<<endl;
+			printf("%d\n",x->key);
 			if(x->right){
+//				printf("<R%d>\n",x->key);
 				inorder(x->right);
+//				printf("</R%d>\n",x->key);
 			}
 		}
 };
@@ -103,6 +121,8 @@ int main(){
 	t.insert(7);
 	t.insert(8);
 	t.insert(1);
+	printf("Root %d\n",t.root->key);
 	t.inorder(t.root);
+	printf("Count: %d\n",t.root->count);
 	return 0;
 }
