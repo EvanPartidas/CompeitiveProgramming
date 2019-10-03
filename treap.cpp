@@ -66,6 +66,18 @@ class treap{
 			}
                         parent->parent = child;
 		}
+		node* search(T data){
+			node* x = root;
+			while(x){
+				if(x->key==data)
+					return x;
+				if(x->key<data)
+					x = x->right;
+				else
+					x = x->left;
+			}
+			return NULL;
+		}
 	public:
 		node* root=NULL;
 		void insert(K data){
@@ -95,17 +107,22 @@ class treap{
 				parent=parent->parent;
 			}
 		}
+		bool contains(T data){
+			return search(data);
+		}
+		void remove(T data){
+			node* x = search(data);
+			if(!x)
+				return;
+			
+		}
 		void inorder(node* x){
 			if(x->left){
-//				printf("<L%d>\n",x->key);
 				inorder(x->left);
-//				printf("</L%d>\n",x->key);
 			}
 			printf("%d\n",x->key);
 			if(x->right){
-//				printf("<R%d>\n",x->key);
 				inorder(x->right);
-//				printf("</R%d>\n",x->key);
 			}
 		}
 };
