@@ -10,14 +10,18 @@ class treap{
 		node* parent;
 		node* left;
 		node* right;
-		node(K data):key(data),priority(rand()%2){}
+		node(K data):key(data),priority(rand()%100),parent(NULL),left(NULL),right(NULL){}
 	};
 	private:
 		void rotR(node* parent){
 			node* child = parent->left;
 			node* babushka = parent->parent;
+
 			parent->left = child->right;
-			child->right = parent;
+			if(parent->left)
+				parent->left->parent=parent;
+
+			child -> right = parent;
 			child -> parent = babushka;
 			if(babushka)
 			{
@@ -26,11 +30,19 @@ class treap{
 				else
 					babushka->right = child;
 			}
+			else{
+				root = child;
+			}
+			parent->parent = child;
 		}
 		void rotL(node* parent){
 			node* child = parent->right;
 			node* babushka = parent->parent;
+
 			parent->right = child->left;
+			if(parent->right)
+				parent->right->parent=parent;
+
 			child->left = parent;
 			child -> parent = babushka;
 			if(babushka)
@@ -39,7 +51,12 @@ class treap{
 					babushka->left = child;
 				else
 					babushka->right = child;
+
 			}
+			else{
+				root = child;
+			}
+                        parent->parent = child;
 		}
 	public:
 		node* root=NULL;
@@ -65,11 +82,13 @@ class treap{
 			}
 		}
 		void inorder(node* x){
-			if(x->left)
+			if(x->left){
 				inorder(x->left);
+			}
 			cout<<(x->key)<<endl;
-			if(x->right)
+			if(x->right){
 				inorder(x->right);
+			}
 		}
 };
 int main(){
