@@ -120,20 +120,38 @@ class treap{
 			while(x->left||x->right){
 				if(x->left&&x->right){
 					if(before(x->left,x->right))
-						rotL(x);
-					else
 						rotR(x);
+					else
+						rotL(x);
 				}
-				else if(x->left)
-					rotL(x);
-				else
+				else if(x->left){
 					rotR(x);
+				}
+				else{
+					rotL(x);
+				}
 			}
 			if(x->parent->left==x)
 				x->parent->left=NULL;
 			else
 				x->parent->right=NULL;
 			delete x;
+		}
+		int rank(K data){
+		    int sum = 0;
+		    node* n = root;
+            while(n){
+				if(n->key <= data){
+					if(n->left)
+						sum+=n->left->count + 1;
+					else
+						sum++;
+					n=n->right;
+				}
+				else
+					n=n->left;
+            }
+            return sum;
 		}
 		void inorder(node* x){
 			if(x->left){
@@ -160,7 +178,10 @@ int main(){
 	printf("Root %d\n",t.root->key);
 	t.inorder(t.root);
 	printf("Count: %d\n",t.root->count);
-	t.remove(25);
+	int r = 3;
+	printf("Rank %d: %d\n",r,t.rank(r));
+	t.remove(5);
 	t.inorder(t.root);
+	printf("Rank %d: %d\n",r,t.rank(r));
 	return 0;
 }
