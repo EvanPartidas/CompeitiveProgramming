@@ -87,6 +87,7 @@ class treap{
 			}
                         parent->parent = child;
 		}
+	public:
 		node* search(K data){
 			node* x = root;
 			while(x){
@@ -105,7 +106,6 @@ class treap{
 			}
 			return a->priority > b->priority;
 		}
-	public:
 		node* root=NULL;
 		void insert(K data){
 			node* n = new node(data);
@@ -135,7 +135,19 @@ class treap{
 			}
 		}
 		void remove(K data){
-			node* x = search(data);
+			node* x = root;
+            while(x){
+				if(x->key==data)
+					break;
+				if(x->key < data){
+					x->count--;
+					x=x->right;
+				}
+				else{
+					x->count--;
+					x=x->left;
+				}
+            }
 			if(!x)
 				return;
 			while(x->left||x->right){
@@ -151,6 +163,8 @@ class treap{
 				else{
 					rotL(x);
 				}
+				update_count(x);
+				update_count(x->parent);
 			}
 			if(x->parent->left==x)
 				x->parent->left=NULL;
@@ -216,11 +230,12 @@ int main(){
 	printf("Root %d\n",t.root->key);
 	t.inorder(t.root);
 	printf("Count: %d\n",t.root->count);
-	int r = 12;
+	int r = 2;
 	printf("Rank %d: %d\n",r,t.rank(r));
-	t.remove(5);
+	t.remove(1);
 	t.inorder(t.root);
 	printf("Rank %d: %d\n",r,t.rank(r));
 	printf("Select %d: %d\n",t.rank(r),t.select(t.rank(r)));
+	printf("Count: %d\n",t.search(r)->count);
 	return 0;
 }
