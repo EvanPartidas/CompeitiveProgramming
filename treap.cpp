@@ -21,6 +21,27 @@ class treap{
 			if(node->left)
 				node->count+=node->left->count;
 		}
+		void rotate(node* parent,node* child, node* &parentrep,node* &childrep){//Global Rotate Function (Untested)
+			node* babushka = parent->parent;
+
+			parentrep = childrep;
+			if(*parentrep)
+				(*parentrep)->parent=parent;
+
+			childrep = parent;
+			child -> parent = babushka;
+			if(babushka)
+			{
+				if(babushka->left==parent)
+					babushka->left = child;
+				else
+					babushka->right = child;
+			}
+			else{
+				root = child;
+			}
+			parent->parent = child;
+		}
 		void rotR(node* parent){
 			node* child = parent->left;
 			node* babushka = parent->parent;
