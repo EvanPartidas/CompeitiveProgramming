@@ -158,7 +158,7 @@ class treap{
 		    int tmp;
 		    node* n = root;
             while(n){
-				tmp = n->left? n->left->count :1;
+				tmp = n->left? n->left->count+1:1;
 				if(tmp+sum < rank){
 					sum+=tmp;
 					n=n->right;
@@ -195,7 +195,7 @@ int main(){
 	printf("Root %d\n",t.root->key);
 	t.inorder(t.root);
 	printf("Count: %d\n",t.root->count);
-	int r = 3;
+	int r = 12;
 	printf("Rank %d: %d\n",r,t.rank(r));
 	t.remove(5);
 	t.inorder(t.root);
