@@ -153,6 +153,23 @@ class treap{
             }
             return sum;
 		}
+		K select(int rank){
+		    int sum = 0;
+		    int tmp;
+		    node* n = root;
+            while(n){
+				tmp = n->left? n->left->count :1;
+				if(tmp+sum < rank){
+					sum+=tmp;
+					n=n->right;
+				}
+				else if(tmp+sum>rank)
+					n=n->left;
+				else
+					break;
+            }
+            return n->key;			
+		}
 		void inorder(node* x){
 			if(x->left){
 				inorder(x->left);
@@ -183,5 +200,6 @@ int main(){
 	t.remove(5);
 	t.inorder(t.root);
 	printf("Rank %d: %d\n",r,t.rank(r));
+	printf("Select %d: %d\n",t.rank(r),t.select(t.rank(r)));
 	return 0;
 }
