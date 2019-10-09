@@ -136,7 +136,7 @@ class treap{
 		}
 		void remove(K data){
 			node* x = root;
-            while(x){
+			while(x){
 				if(x->key==data)
 					break;
 				if(x->key < data){
@@ -147,7 +147,7 @@ class treap{
 					x->count--;
 					x=x->left;
 				}
-            }
+			}
 			if(!x)
 				return;
 			while(x->left||x->right){
@@ -164,18 +164,21 @@ class treap{
 					rotL(x);
 				}
 				update_count(x);
+				x->count--;
 				update_count(x->parent);
 			}
-			if(x->parent->left==x)
-				x->parent->left=NULL;
-			else
-				x->parent->right=NULL;
+			if(x->parent){
+				if(x->parent->left==x)
+					x->parent->left=NULL;
+				else
+					x->parent->right=NULL;
+			}
 			delete x;
 		}
 		int rank(K data){
-		    int sum = 0;
-		    node* n = root;
-            while(n){
+			int sum = 0;
+			node* n = root;
+			while(n){
 				if(n->key <= data){
 					if(n->left)
 						sum+=n->left->count + 1;
@@ -185,14 +188,14 @@ class treap{
 				}
 				else
 					n=n->left;
-            }
-            return sum;
+			}
+            		return sum;
 		}
 		K select(int rank){
-		    int sum = 0;
-		    int tmp;
-		    node* n = root;
-            while(n){
+			int sum = 0;
+			int tmp;
+			node* n = root;
+			while(n){
 				tmp = n->left? n->left->count+1:1;
 				if(tmp+sum < rank){
 					sum+=tmp;
@@ -202,8 +205,8 @@ class treap{
 					n=n->left;
 				else
 					break;
-            }
-            return n->key;			
+			}
+			return n->key;			
 		}
 		void inorder(node* x){
 			if(x->left){
@@ -229,13 +232,14 @@ int main(){
 	t.insert(1);
 	printf("Root %d\n",t.root->key);
 	t.inorder(t.root);
-	printf("Count: %d\n",t.root->count);
-	int r = 2;
+	printf("Count(root): %d\n",t.root->count);
+	int r = 7;
 	printf("Rank %d: %d\n",r,t.rank(r));
-	t.remove(1);
+	printf("Count(%d): %d\n",r,t.search(r)->count);
+	t.remove(6);
 	t.inorder(t.root);
 	printf("Rank %d: %d\n",r,t.rank(r));
 	printf("Select %d: %d\n",t.rank(r),t.select(t.rank(r)));
-	printf("Count: %d\n",t.search(r)->count);
+	printf("Count(%d): %d\n",r,t.search(r)->count);
 	return 0;
 }
