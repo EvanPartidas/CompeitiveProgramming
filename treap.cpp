@@ -21,6 +21,27 @@ class treap{
 			if(node->left)
 				node->count+=node->left->count;
 		}
+		void rotate(node* parent,node* child, node* &parentrep,node* &childrep){//Global Rotate Function (Untested)
+			node* babushka = parent->parent;
+
+			parentrep = childrep;
+			if(*parentrep)
+				(*parentrep)->parent=parent;
+
+			childrep = parent;
+			child -> parent = babushka;
+			if(babushka)
+			{
+				if(babushka->left==parent)
+					babushka->left = child;
+				else
+					babushka->right = child;
+			}
+			else{
+				root = child;
+			}
+			parent->parent = child;
+		}
 		void rotR(node* parent){
 			node* child = parent->left;
 			node* babushka = parent->parent;
@@ -66,7 +87,8 @@ class treap{
 			}
                         parent->parent = child;
 		}
-		node* search(T data){
+	public:
+		node* search(K data){
 			node* x = root;
 			while(x){
 				if(x->key==data)
@@ -78,7 +100,12 @@ class treap{
 			}
 			return NULL;
 		}
-	public:
+		bool before(node* a,node* b){
+			if(a->priority==b->priority){
+				return a->count > b->count;
+			}
+			return a->priority > b->priority;
+		}
 		node* root=NULL;
 		void insert(K data){
 			node* n = new node(data);
@@ -107,14 +134,76 @@ class treap{
 				parent=parent->parent;
 			}
 		}
-		bool contains(T data){
-			return search(data);
-		}
-		void remove(T data){
-			node* x = search(data);
+		void remove(K data){
+			node* x = root;
+            while(x){
+				if(x->key==data)
+					break;
+				if(x->key < data){
+					x->count--;
+					x=x->right;
+				}
+				else{
+					x->count--;
+					x=x->left;
+				}
+            }
 			if(!x)
 				return;
-			
+			while(x->left||x->right){
+				if(x->left&&x->right){
+					if(before(x->left,x->right))
+						rotR(x);
+					else
+						rotL(x);
+				}
+				else if(x->left){
+					rotR(x);
+				}
+				else{
+					rotL(x);
+				}
+				update_count(x);
+				update_count(x->parent);
+			}
+			if(x->parent->left==x)
+				x->parent->left=NULL;
+			else
+				x->parent->right=NULL;
+			delete x;
+		}
+		int rank(K data){
+		    int sum = 0;
+		    node* n = root;
+            while(n){
+				if(n->key <= data){
+					if(n->left)
+						sum+=n->left->count + 1;
+					else
+						sum++;
+					n=n->right;
+				}
+				else
+					n=n->left;
+            }
+            return sum;
+		}
+		K select(int rank){
+		    int sum = 0;
+		    int tmp;
+		    node* n = root;
+            while(n){
+				tmp = n->left? n->left->count+1:1;
+				if(tmp+sum < rank){
+					sum+=tmp;
+					n=n->right;
+				}
+				else if(tmp+sum>rank)
+					n=n->left;
+				else
+					break;
+            }
+            return n->key;			
 		}
 		void inorder(node* x){
 			if(x->left){
@@ -141,5 +230,12 @@ int main(){
 	printf("Root %d\n",t.root->key);
 	t.inorder(t.root);
 	printf("Count: %d\n",t.root->count);
+	int r = 2;
+	printf("Rank %d: %d\n",r,t.rank(r));
+	t.remove(1);
+	t.inorder(t.root);
+	printf("Rank %d: %d\n",r,t.rank(r));
+	printf("Select %d: %d\n",t.rank(r),t.select(t.rank(r)));
+	printf("Count: %d\n",t.search(r)->count);
 	return 0;
 }
