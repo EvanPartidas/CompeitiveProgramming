@@ -4,7 +4,7 @@
 using namespace std;
 const int MAXN = 100000;
 
-int N,C[MAXN],TRA[MAXN],RA[MAXN],TSA[MAXN],SA[MAXN];
+int N,C[MAXN],RA[MAXN],TMP[MAXN],SA[MAXN],LCP[MAXN];
 char STR[MAXN];
 
 void countsort(int k,int size){//Stable Countsort
@@ -16,9 +16,9 @@ void countsort(int k,int size){//Stable Countsort
     for(i=1;i<size;i++)
         C[i]+=C[i-1];
     for(i=N-1;i>=0;i--)
-        TSA[--C[SA[i]+k<N?RA[SA[i]+k]:0]] = SA[i];
+        TMP[--C[SA[i]+k<N?RA[SA[i]+k]:0]] = SA[i];
     for(i=0;i<N;i++)
-        SA[i]=TSA[i];
+        SA[i]=TMP[i];
 }
 
 void print(){
@@ -35,20 +35,27 @@ void initSA(){
     for(k=1;k<N;k<<=1){
             countsort(k,300);
             countsort(0,300);
-            TRA[SA[0]]=r=0;
+            TMP[SA[0]]=r=0;
             for(i=1;i<N;i++){
-		TRA[SA[i]]=
-			(RA[SA[i]]==RA[SA[i-1]] && RA[SA[i]+k]==RA[SA[i-1]+k])?r:++r;
-
+				TMP[SA[i]]=
+					(RA[SA[i]]==RA[SA[i-1]] && RA[SA[i]+k]==RA[SA[i-1]+k])?r:++r;
             }
             for (i = 0; i < N; i++)
-                RA[i] = TRA[i];
+                RA[i] = TMP[i];
             if (RA[SA[N-1]] == N-1) break;
     }
 }
 
 int lcp(){
-	
+	int len=0;
+	int prefix=0;
+	int i;
+	for(i = 1;i<N;i++){
+		while(STR[i+len]==STR[SA[i-1]+len]) len++;
+		prefix = max(len,prefix);
+		len = max(len-1,0);
+	}
+	return prefix;
 }
 
 int main(){
@@ -57,5 +64,6 @@ int main(){
 	STR[N++]='$';
 	initSA();
 	print();
+	printf("%d\n",lcp());
 	return 0;
 }
