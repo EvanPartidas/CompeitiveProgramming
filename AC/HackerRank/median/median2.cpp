@@ -1,9 +1,11 @@
 #include <iostream>
+#include <iomanip>
 
 using namespace std;
 
 template <typename K>
 class treap{
+	public:
 	struct node{
 		K key;
 		int priority;
@@ -91,8 +93,9 @@ class treap{
 		node* search(K data){
 			node* x = root;
 			while(x){
-				if(x->key==data)
+				if(x->key==data){
 					return x;
+				}
 				if(x->key<data)
 					x = x->right;
 				else
@@ -113,6 +116,7 @@ class treap{
 			node** x = &root;
 			while((*x)){
 				parent = *x;
+				parent->count++;
 				if((*x)->key<data)
 					x = &((*x)->right);
 				else
@@ -129,10 +133,6 @@ class treap{
 				parent = n->parent;
 			}
 			update_count(n);
-			while(parent){
-				update_count(parent);
-				parent=parent->parent;
-			}
 		}
 		void remove(K data){
 			node* x = root;
@@ -223,26 +223,41 @@ class treap{
 };
 int main(){
 	treap<int> t;
-	t.insert(25);
-	t.insert(10);
-	t.insert(6);
-	t.insert(2);
-	t.insert(3);
-	t.insert(12);
-	t.insert(5);
-	t.insert(7);
-	t.insert(8);
-	t.insert(1);
-	printf("Root %d\n",t.root->key);
-	t.inorder(t.root);
-	printf("Count(root): %d\n",t.root->count);
-	int r = 7;
-	printf("Rank %d: %d\n",r,t.rank(r));
-	printf("Count(%d): %d\n",r,t.search(r)->count);
-	t.remove(6);
-	t.inorder(t.root);
-	printf("Rank %d: %d\n",r,t.rank(r));
-	printf("Select %d: %d\n",t.rank(r),t.select(t.rank(r)));
-	printf("Count(%d): %d\n",r,t.search(r)->count);
+	int N;
+	cin>>N;
+	cout<<fixed;
+	cout<<setprecision(1);
+	int size = 0;
+	for(int i=0;i<N;i++){
+		char str[4];
+		int num;
+		cin>>str>>num;
+		treap<int>::node* x = t.search(num);
+		bool odd = size%2==1;
+		if(str[0]=='r'){
+			//Code for removal
+			if(!x){//If the number is not found, continue
+				cout<<"Wrong!"<<endl;
+				continue;
+			}
+			t.remove(num);
+			if(--size==0){
+				cout<<"Wrong!"<<endl;
+				continue;
+			}
+		}else{
+			size++;
+			t.insert(num);
+		}
+		if(!odd)
+			cout<<t.select(size/2 + 1)<<endl;
+		else{
+			double output = (long(t.select(size/2)) + t.select(size/2 +1))/2.0;
+			if(int(output)==output)
+				cout<<int(output)<<endl;
+			else
+				cout<<output<<endl;
+		}
+    }
 	return 0;
 }
