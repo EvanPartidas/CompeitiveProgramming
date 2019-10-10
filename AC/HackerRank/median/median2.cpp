@@ -23,12 +23,12 @@ class treap{
 			if(node->left)
 				node->count+=node->left->count;
 		}
-		void rotate(node* parent,node* child, node* &parentrep,node* &childrep){//Global Rotate Function (Untested)
+		void rotate(node* parent,node* child, node* &parentrep,node* &childrep){
 			node* babushka = parent->parent;
 
 			parentrep = childrep;
-			if(*parentrep)
-				(*parentrep)->parent=parent;
+			if(parentrep)
+				parentrep->parent=parent;
 
 			childrep = parent;
 			child -> parent = babushka;
@@ -44,58 +44,12 @@ class treap{
 			}
 			parent->parent = child;
 		}
-		void rotR(node* parent){
-			node* child = parent->left;
-			node* babushka = parent->parent;
-
-			parent->left = child->right;
-			if(parent->left)
-				parent->left->parent=parent;
-
-			child -> right = parent;
-			child -> parent = babushka;
-			if(babushka)
-			{
-				if(babushka->left==parent)
-					babushka->left = child;
-				else
-					babushka->right = child;
-			}
-			else{
-				root = child;
-			}
-			parent->parent = child;
-		}
-		void rotL(node* parent){
-			node* child = parent->right;
-			node* babushka = parent->parent;
-
-			parent->right = child->left;
-			if(parent->right)
-				parent->right->parent=parent;
-
-			child->left = parent;
-			child -> parent = babushka;
-			if(babushka)
-			{
-				if(babushka->left==parent)
-					babushka->left = child;
-				else
-					babushka->right = child;
-
-			}
-			else{
-				root = child;
-			}
-                        parent->parent = child;
-		}
 	public:
 		node* search(K data){
 			node* x = root;
 			while(x){
-				if(x->key==data){
+				if(x->key==data)
 					return x;
-				}
 				if(x->key<data)
 					x = x->right;
 				else
@@ -116,7 +70,6 @@ class treap{
 			node** x = &root;
 			while((*x)){
 				parent = *x;
-				parent->count++;
 				if((*x)->key<data)
 					x = &((*x)->right);
 				else
@@ -126,13 +79,17 @@ class treap{
 			n->parent = parent;
 			while(parent && (parent->priority) < (n->priority)){
 				if(parent->left==n)
-					rotR(parent);
+					rotate(parent,n,parent->left,n->right);
 				else
-					rotL(parent);
+					rotate(parent,n,parent->right,n->left);
 				update_count(parent);
 				parent = n->parent;
 			}
 			update_count(n);
+			while(parent){
+				update_count(parent);
+				parent=parent->parent;
+			}
 		}
 		void remove(K data){
 			node* x = root;
@@ -153,15 +110,15 @@ class treap{
 			while(x->left||x->right){
 				if(x->left&&x->right){
 					if(before(x->left,x->right))
-						rotR(x);
+						rotate(x,x->left,x->left,x->left->right);
 					else
-						rotL(x);
+						rotate(x,x->right,x->right,x->right->left);
 				}
 				else if(x->left){
-					rotR(x);
+					rotate(x,x->left,x->left,x->left->right);
 				}
 				else{
-					rotL(x);
+					rotate(x,x->right,x->right,x->right->left);
 				}
 				update_count(x);
 				x->count--;
