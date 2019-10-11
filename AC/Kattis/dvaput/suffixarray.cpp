@@ -53,22 +53,19 @@ int lcp(){
 	for(i=1;i<N;i++)
 		TMP[SA[i]]=SA[i-1];
 	for(i = 0;i<N-1;i++){
-		printf("Before: %d\t",len);
 		while(STR[i+len]==STR[TMP[i]+len]) len++;
-		printf("After: %d\t",len);
-		printf("Str: %s\n",STR+i);
 		prefix = max(len,prefix);
 		len = max(len-1,0);
 	}
 	return prefix;
 }
 
+
 int main(){
 	cin>>N;
 	cin>>STR;
 	STR[N++]='$';
-	initSA();
-	print();
-	printf("LCP: %d\n",lcp());
+	initSA();//O(NlogN)
+	cout<<lcp()<<endl;//O(N)
 	return 0;
 }
