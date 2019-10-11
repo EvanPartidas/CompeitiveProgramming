@@ -21,13 +21,6 @@ void countsort(int k,int size){//Stable Countsort
         SA[i]=TMP[i];
 }
 
-void print(){
-	puts("Printing...");
-	for(int i=0;i<N;i++){
-		cout<<(STR+SA[i])<<endl;
-	}	
-}
-
 void initSA(){
 	int i,k=1,r;
 	for(i=0;i<N;i++)
@@ -55,10 +48,7 @@ int lcp(){
 	for(i=1;i<N;i++)
 		TMP[SA[i]]=SA[i-1];
 	for(i = 1;i<N;i++){
-		//printf("Before: %d\t",len);
 		while(STR[i+len]==STR[TMP[i]+len]) len++;
-		//printf("After: %d\t",len);
-		//printf("Str: %s\n",STR+i);
 		prefix = max(len,prefix);
 		len = max(len-1,0);
 	}
@@ -69,8 +59,7 @@ int main(){
 	cin>>N;
 	cin>>STR;
 	STR[N++]='$';
-	initSA();
-	print();
-	printf("LCP: %d\n",lcp());
+	initSA();//O(NlogN)
+	cout<<lcp()<<endl;//O(N)
 	return 0;
 }
