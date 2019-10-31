@@ -7,9 +7,13 @@ import time
 import re
 import collections
 import operator
-selenium.webdriver.firefox.options.Options.headless = True
-driver = webdriver.Firefox(".")
+from selenium.webdriver.firefox.options import Options
+opt = Options()
+opt.headless = True
+driver = webdriver.Firefox(options=opt)
 table = dict()
+scores = dict()
+usernames = dict()
 for link in links:
 	driver.get(link)
 	time.sleep(2)
@@ -20,23 +24,26 @@ for link in links:
 	rows = elem.find_elements_by_class_name("this")
 	for row in rows:
 			name =  row.find_element_by_xpath("./td[2]/div/a").text
+			username = re.findall(".*\(",name)[0][0:-2]
 			name =  re.findall("\(.*\)", name)[0][1:-1]
 			score = int(row.find_element_by_xpath("./td[3]/a").text)
 			print(name)
 			print(score)
+			usernames[name]=username
 			if not name in table:
 				table[name] = score
 			else:
 				table[name]+=score
 sorted_x = sorted(table.items(), key=operator.itemgetter(1), reverse=True)
 table = collections.OrderedDict(sorted_x)
-print("<table border=\"1\">\n  <tr>\n    <th>Rank</th> \n    <th>User</th>\n    <th>Score</th>\n  </tr>")
+print("<table border=\"1\">\n<tr>\n<th>Rank</th>\n<th>User</th>\n<th>Score</th>\n</tr>")
 rank = 1
 for key in table.keys():
 	print("<tr>")
 	print("<td>"+str(rank)+"</td>")
-        print("<td>"+key+"</td>")
+        print("<td><a href="+"\"https://vjudge.net/user/"+usernames[key]+"\">"+key+"</td>")
         print("<td>"+str(table[key])+"</td>")
 	print("</tr>")
 	rank+=1
 print("</tr>\n</table>")
+driver.quit()
