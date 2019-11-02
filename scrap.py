@@ -10,7 +10,7 @@ import operator
 from selenium.webdriver.firefox.options import Options
 opt = Options()
 opt.headless = True
-driver = webdriver.Firefox(options=opt)
+driver = webdriver.Firefox(options=opt,executable_path="geckodriver")
 table = dict()
 scores = dict()
 usernames = dict()
