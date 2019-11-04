@@ -13,12 +13,13 @@ int sum(int n){
 
 int main(){
 	int N,i;
-	while(N){
+	while(1){
 		cin>>N;
 		if(!N)
 			break;
+		int s = sum(N);
 		for(i=11;i<=100;i++){
-			if(sum(N)==sum(N*i))
+			if(s==sum(N*i))
 				break;
 		}
 		cout<<i<<endl;
