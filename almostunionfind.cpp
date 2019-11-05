@@ -30,18 +30,21 @@ void merge(int a, int b){
 }
 
 void remove(int node){
+	int root = find(map[node]);
+	count[root]--;
+	sum[root]-=node;
 	map[node]=SIZE;
 	set[SIZE]=SIZE;
 	SIZE++;
-	count[node]=1;
-	sum[node]=node;
+	count[map[node]]=1;
+	sum[map[node]]=node;
 }
 
 int main(){
 
 	while(!cin.eof()){
 		cin>>N>>M;
-		SIZE = N;
+		SIZE = N+1;
 		for(int i=0;i<=N;i++){
 			count[i]=1;
 			set[i]=i;
@@ -54,19 +57,21 @@ int main(){
 			switch(type){
 				case 1:{
 					cin>>q;
-					merge(p,q);
+					if(find(map[p])==find(map[q]))
+						break;
+					merge(map[p],map[q]);
 					break;
 				}
 				case 2:{
 					cin>>q;
-					if(find(p)==find(q))
+					if(find(map[p])==find(map[q]))
 						break;
 					remove(p);
-					merge(p,q);
+					merge(map[p],map[q]);
 					break;
 				}
 				case 3:{
-					p = find(p);
+					p = find(map[p]);
 					cout<<count[p]<<" "<<sum[p]<<endl;
 					break;
 				}
