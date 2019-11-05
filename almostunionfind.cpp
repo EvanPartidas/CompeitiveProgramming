@@ -4,20 +4,20 @@
 using namespace std;
 
 const int MAXN = 100005;
+const int MAXM = 100005;
 
-int set[MAXN];
+int set[MAXN+MAXM];
 int count[MAXN];
+int map[MAXN];
 long long sum[MAXN];
-unordered_set<int> children[MAXN];
 
+
+int N,M,SIZE;
 
 int find(int node){
 	if(set[node]==node)
 		return node;
-	int parent = set[node];
 	set[node] = find(set[node]);
-	if(set[node]!=parent)
-		children[parent].erase(node);
 	return set[node];
 }
 
@@ -25,48 +25,28 @@ void merge(int a, int b){
 	a = find(a);
 	b = find(b);
 	set[b]=a;
-	children[a].insert(b);
 	count[a]+=count[b];
 	sum[a]+=sum[b];
 }
 
 void remove(int node){
-	int root = find(node);
-	if(root==node){
-		bool first= true;
-		for(int child:children[node]){
-			if(first){
-				set[node]=child;
-				root = child;
-				count[root]= count[node]-1;
-				sum[root]=sum[node]-node;
-				first = false;
-			}
-			find(child);
-		}
-	}
-	else{
-		for(int child:children[node]){
-			find(child);
-		}
-		count[root]--;
-		sum[root]-= node;
-	}
-	count[node]= 1;
-	sum[node]= node;
-	set[node]= node;
+	map[node]=SIZE;
+	set[SIZE]=SIZE;
+	SIZE++;
+	count[node]=1;
+	sum[node]=node;
 }
 
-int N,M;
 int main(){
 
 	while(!cin.eof()){
 		cin>>N>>M;
+		SIZE = N;
 		for(int i=0;i<=N;i++){
 			count[i]=1;
 			set[i]=i;
 			sum[i]=i;
-			children[i].clear();
+			map[i]=i;
 		}
 		int type,p,q;
 		while(M-->0){
