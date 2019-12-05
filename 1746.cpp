@@ -1,50 +1,36 @@
 #include <iostream>
+#include <bitset>
  
 using namespace std;
  
 const int MAXN = 1e5+5;
 const int MAXM = 105;
 const int MOD = 1e9+7;
-const int ZERO = -2e9;
  
-long long dp[MAXN][MAXM];
+int dp[MAXN][MAXM];
+bool visited[MAXN][MAXM];
 int arr[MAXN];
  
 int N,M;
 
-int bruh = 0;
 int count(int index,int val){
 	if(index==N-1){
 		if(arr[index]==0){
-			if(val>0&&val<=M)
-				return dp[index][val]=1;
-			else{
-				dp[index][val]=ZERO;
-				return 0;
-			}
+			return val>0&&val<=M;
 		}
 		else
 			return val==arr[index];
 	}
 	if(val<1 || val>M || (arr[index]!=0 && arr[index]!=val)){
-		dp[index][val] = ZERO;
-		return 0;
+		return dp[index][val] = 0;
 	}
-	if(dp[index][val]==ZERO)
-		return 0;
-	if(dp[index][val])
+	if(visited[index][val])
 		return dp[index][val];
-	bruh++;
-	cout<<"Recursive calls"<<bruh<<endl;
-	std::cout.flush();
 	for(int k=max(0,val-1);k<=min(M,val+1);k++){
-		dp[index][val]=count(index+1,k);
+		dp[index][val]+=count(index+1,k);
 		dp[index][val]%=MOD;
 	}
-	if(dp[index][val]==0){
-		dp[index][val]=ZERO;
-		return 0;
-	}
+	visited[index][val]=1;
 	return dp[index][val];
 }
  
