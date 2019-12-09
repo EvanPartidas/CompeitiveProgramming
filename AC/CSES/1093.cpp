@@ -1,4 +1,5 @@
 #include <iostream>
+#include <bitset>
 
 using namespace std;
 
@@ -11,10 +12,8 @@ bool visited[MAXN][MAXSUM];
 int dp[MAXN][MAXSUM];
 
 int help(int num,int left){
-	if(num==0&&left==0)
-		return 1;
-	if(num==0||left<0)
-		return 0;
+	if(num==0)
+		return left==OFFSET;
 	if(visited[num][left])
 		return dp[num][left];
 	dp[num][left]=help(num-1,left+num)+help(num-1,left-num);
@@ -25,11 +24,7 @@ int help(int num,int left){
 
 int main(){
 	int N;
-	//cin>>N;
-	//cout<<(help(N,OFFSET)/2);
-	for(int i=1;i<=500;i++){
-		if(help(i,0))
-			printf("%d %d\n",i,help(i,0));
-	}
+	cin>>N;
+	cout<<(((long long)(help(N,OFFSET))*500000004)%MOD);
 	return 0;
 }
