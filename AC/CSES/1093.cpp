@@ -25,6 +25,10 @@ int help(int num,int left){
 int main(){
 	int N;
 	cin>>N;
+	if((N*(N+1)/2)%2!=0){
+		cout<<0<<endl;
+		return 0;
+	}
 	cout<<(((long long)(help(N,OFFSET))*500000004)%MOD);
 	return 0;
 }
