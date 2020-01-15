@@ -14,14 +14,15 @@ int countsort(int k,int size){//Stable Countsort
     for(i=0;i<27;i++)
 		C[i]=0;
     for(i=0;i<size;i++)
-        C[SA[i]+k<N?cpy[SA[i]+k]:cpy[SA[i]+k-N+1]]++;   
-    for(i=1;i<27;i++){
+        C[SA[i]+k<N?cpy[SA[i]+k]:cpy[SA[i]+k-N]]++;   
+    for(i=0;i<27;i++){
 		if(C[i]>0&&ret==0)
 			ret = C[i];
-        C[i]+=C[i-1];
+		if(i>0)
+			C[i]+=C[i-1];
 	}
     for(i=size-1;i>=0;i--)
-        TMP[--C[SA[i]+k<N?cpy[SA[i]+k]:cpy[SA[i]+k-N+1]]] = SA[i];
+        TMP[--C[SA[i]+k<N?cpy[SA[i]+k]:cpy[SA[i]+k-N]]] = SA[i];
     for(i=0;i<size;i++)
         SA[i]=TMP[i];
     return ret;
@@ -36,7 +37,8 @@ int main(){
 	}
 	int size = N,i=0;
 	while(size>1&&i<N){
-		size = countsort(i++,size+1);
+		size = countsort(i++,size);
+		printf("%d %d\n",size,i);
 	}
 	cout<<(str+SA[0]);
 	str[SA[0]]=0;
