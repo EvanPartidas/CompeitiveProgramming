@@ -15,6 +15,8 @@ int main()
 {
 	ios_base::sync_with_stdio(false);
 	cin.tie(0);cout.tie(0);
+	prefix[0]=1;
+	inv[0]=1;
 	prefix[1]=1;
 	inv[1]=1;
 	for(int i=2;i<MAX;i++)inv[i]=1LL*(MOD-MOD/i)*inv[MOD%i]%MOD;

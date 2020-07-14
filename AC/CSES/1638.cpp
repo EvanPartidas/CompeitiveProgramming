@@ -16,7 +16,7 @@ int main(){
 	for(int i=0;i<N;i++){
 		cin>>map[i];		
 	}
-	dp[0][0]=1;
+	dp[0][0]=(map[0][0]=='.');
 	for(int i=0;i<N;i++){
 		for(int j=0;j<N;j++){
 			if(map[i][j]=='.'){
